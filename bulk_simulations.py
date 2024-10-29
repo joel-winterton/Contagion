@@ -250,7 +250,7 @@ mu = 0.32
 # Haslemere (roughly)
 seed_patch = 97
 
-def go(seed_patch,r_nought=R_nought):
+def go(seed_patch,r_nought=dampened_R_nought):
     infections = Infections(t_max=t_max,
                             patch_ages=patch_ages,
                             age_contact_matrix=age_contact_matrix,
@@ -266,6 +266,13 @@ def go(seed_patch,r_nought=R_nought):
                             mu=mu)
     infections.simulate_between_patch(seed_location=seed_patch, seed_time=0)
     return infections
+
+
+
+"""
+Multithreading section 
+"""
+
 import time
 def objective_to_maximise(sim):
     """
@@ -282,7 +289,7 @@ total_cases = np.zeros(shape=number_of_patches)
 sims_per_patch = []
 if __name__=='__main__':
     p = Pool()
-    simulations = p.map(go, range(number_of_patches))
+    simulations = p.map(go, [i for i in range(number_of_patches)])
     end = time.time()
     print(end - start)
     total_cases = np.zeros(shape=number_of_patches)
